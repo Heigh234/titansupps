@@ -50,7 +50,7 @@ export async function getDashboardMetrics() {
     (supabase as any).from('products').select('id', { count: 'exact' }).in('status', ['low_stock', 'out_of_stock']),
   ]);
 
-  const totalRevenue = (revenueRes.data ?? []).reduce((acc, o) => acc + o.total, 0);
+  const totalRevenue = (revenueRes.data ?? []).reduce((acc: number, o: { total: number }) => acc + o.total, 0);
 
   return {
     pendingOrders:   ordersRes.count ?? 0,
