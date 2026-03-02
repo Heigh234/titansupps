@@ -1,10 +1,11 @@
-import { ArrowUpRight, ArrowDownRight, DollarSign, Package, ShoppingCart, Users } from 'lucide-react';
+import { DollarSign, Package, ShoppingCart, Users } from 'lucide-react';
 
+// TODO: Reemplazar con fetch a la API cuando el backend esté listo.
 const METRICS = [
-  { title: "Ventas Totales", value: "$42,500", change: "+12.5%", isPositive: true, icon: DollarSign },
-  { title: "Pedidos Hoy", value: "142", change: "+5.2%", isPositive: true, icon: ShoppingCart },
-  { title: "Productos Activos", value: "86", change: "-2.1%", isPositive: false, icon: Package },
-  { title: "Nuevos Clientes", value: "1,240", change: "+18.0%", isPositive: true, icon: Users },
+  { title: 'Ventas Totales',    value: '—',  change: '—', isPositive: true,  icon: DollarSign },
+  { title: 'Pedidos Hoy',      value: '—',  change: '—', isPositive: true,  icon: ShoppingCart },
+  { title: 'Productos Activos', value: '—', change: '—', isPositive: false, icon: Package },
+  { title: 'Nuevos Clientes',  value: '—',  change: '—', isPositive: true,  icon: Users },
 ];
 
 export default function AdminDashboard() {
@@ -26,8 +27,7 @@ export default function AdminDashboard() {
               <div className="p-3 bg-titan-bg border border-titan-border text-titan-accent">
                 <metric.icon size={20} />
               </div>
-              <span className={`flex items-center gap-1 text-xs font-bold px-2 py-1 ${metric.isPositive ? 'text-green-500 bg-green-500/10' : 'text-red-500 bg-red-500/10'}`}>
-                {metric.isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+              <span className="text-xs font-bold px-2 py-1 text-titan-text-muted bg-titan-surface-hover">
                 {metric.change}
               </span>
             </div>
@@ -46,30 +46,18 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-titan-surface border border-titan-border p-6 min-h-[400px] flex flex-col">
           <h3 className="font-heading text-xl uppercase tracking-wider text-titan-text mb-6">Ingresos (Últimos 7 días)</h3>
           <div className="flex-1 border border-dashed border-titan-border flex items-center justify-center text-titan-text-muted text-sm">
-            [Gráfico de Área con Recharts / Chart.js iría aquí]
+            [Gráfico de Área — conectar con API]
           </div>
         </div>
 
-        {/* Recent Orders Mini-table */}
+        {/* Recent Orders */}
         <div className="bg-titan-surface border border-titan-border p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-heading text-xl uppercase tracking-wider text-titan-text">Pedidos Recientes</h3>
             <a href="/admin/orders" className="text-xs text-titan-accent uppercase tracking-widest hover:text-white transition-colors">Ver todos</a>
           </div>
-          
-          <div className="space-y-4 flex-1">
-            {[1, 2, 3, 4, 5].map((order) => (
-              <div key={order} className="flex justify-between items-center pb-4 border-b border-titan-border last:border-0">
-                <div>
-                  <p className="text-sm font-bold text-titan-text">ORD-{1000 + order}</p>
-                  <p className="text-xs text-titan-text-muted">Hace 2 horas</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-bold text-titan-accent">$129.99</p>
-                  <span className="text-[10px] uppercase px-2 py-0.5 bg-yellow-500/10 text-yellow-500 font-bold">Pendiente</span>
-                </div>
-              </div>
-            ))}
+          <div className="flex-1 border border-dashed border-titan-border flex items-center justify-center text-titan-text-muted text-sm">
+            [Conectar con API de pedidos]
           </div>
         </div>
 
