@@ -50,10 +50,10 @@ export const INIT_COUPONS: Coupon[] = [
 ];
 
 export const INIT_INTEGRATIONS: Integration[] = [
-  { id: 'stripe',    name: 'Stripe',          desc: 'Procesamiento de pagos y gestión de suscripciones.',      icon: '💳', connected: true,  apiKey: 'sk_live_••••••••••••••4xGh', status: 'Activo · €42.500 procesados' },
-  { id: 'klaviyo',   name: 'Klaviyo',          desc: 'Email marketing, flows automatizados y segmentación.',    icon: '📧', connected: false },
-  { id: 'analytics', name: 'Google Analytics', desc: 'Métricas de tráfico, conversión y comportamiento.',       icon: '📊', connected: true,  apiKey: 'G-XXXXXXXXXX',               status: 'Recibiendo datos' },
-  { id: 'metapixel', name: 'Meta Pixel',       desc: 'Retargeting, audiencias y conversiones en Meta Ads.',    icon: '📱', connected: false },
+  { id: 'stripe',    name: 'Stripe',          desc: 'Procesamiento de pagos y gestión de suscripciones.',   icon: '💳', connected: false },
+  { id: 'klaviyo',   name: 'Klaviyo',         desc: 'Email marketing, flows automatizados y segmentación.', icon: '📧', connected: false },
+  { id: 'analytics', name: 'Google Analytics',desc: 'Métricas de tráfico, conversión y comportamiento.',    icon: '📊', connected: false },
+  { id: 'metapixel', name: 'Meta Pixel',      desc: 'Retargeting, audiencias y conversiones en Meta Ads.',  icon: '📱', connected: false },
 ];
 
 // Formulario vacío para crear un nuevo cupón
