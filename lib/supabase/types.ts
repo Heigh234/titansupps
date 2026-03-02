@@ -29,7 +29,16 @@ export type Database = {
           updated_at: string;
         };
         Insert: Omit<Database['public']['Tables']['profiles']['Row'], 'created_at' | 'updated_at'>;
-        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
+        Update: {
+          name?: string | null;
+          phone?: string | null;
+          city?: string | null;
+          country?: string;
+          role?: 'user' | 'admin';
+          segment?: 'vip' | 'activo' | 'nuevo' | 'suspendido';
+          notes?: string | null;
+          avatar_url?: string | null;
+        };
       };
       products: {
         Row: {
