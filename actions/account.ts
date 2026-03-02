@@ -60,7 +60,8 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
   const parsed = ProfileSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
-  const { error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from('profiles')
     .update(parsed.data)
     .eq('id', user.id);
