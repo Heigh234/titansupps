@@ -248,15 +248,17 @@ export async function updateStoreSettings(formData: FormData): Promise<ActionRes
     'free_shipping_threshold', 'standard_days', 'express_days',
   ];
 
-  const filtered = Object.fromEntries(
+  const filteredRaw = Object.fromEntries(
     Object.entries(raw).filter(([k]) => ALLOWED_FIELDS.includes(k))
   );
 
   // Convertir booleans de checkbox
   const boolFields = ['notif_new_order', 'notif_order_shipped', 'notif_order_cancelled',
     'notif_low_stock', 'notif_new_user', 'notif_newsletter_sub', 'notif_weekly_report'];
+
+  const filtered: Record<string, unknown> = { ...filteredRaw };
   for (const field of boolFields) {
-    filtered[field] = filtered[field] === 'on' || filtered[field] === 'true';
+    filtered[field] = filteredRaw[field] === 'on' || filteredRaw[field] === 'true';
   }
 
   const { error } = await (supabase as any).from('store_settings').update(filtered).eq('id', 1);

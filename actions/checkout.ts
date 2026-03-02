@@ -150,7 +150,8 @@ export async function createPaymentIntent(
   const total = Math.max(0, subtotal - discount + shipping);
 
   // Stripe PaymentIntent
-  const stripe = (await import('stripe')).default(process.env.STRIPE_SECRET_KEY!);
+  const { default: Stripe } = await import('stripe');
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(total * 100), // céntimos
     currency: 'eur',
@@ -245,7 +246,7 @@ export async function confirmOrderPayment(stripePaymentIntentId: string): Promis
 
   // Incrementar uso del cupón si aplica
   if (order.coupon_code) {
-    await supabase.rpc('increment_coupon_uses', { coupon_code: order.coupon_code });
+    await (supabase as any).rpc('increment_coupon_uses', { coupon_code: order.coupon_code });
   }
 
   // Reducir stock de los productos
@@ -256,7 +257,7 @@ export async function confirmOrderPayment(stripePaymentIntentId: string): Promis
 
   for (const item of items ?? []) {
     if (item.product_id) {
-      await supabase.rpc('decrement_product_stock', {
+      await (supabase as any).rpc('decrement_product_stock', {
         p_product_id: item.product_id,
         p_quantity:   item.quantity,
       });
