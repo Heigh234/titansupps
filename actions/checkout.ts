@@ -54,7 +54,7 @@ export async function validateCoupon(
   if (!code?.trim()) return { error: 'Introduce un código de cupón.' };
 
   const supabase = await createClient();
-  const { data: coupon, error } = await supabase
+  const { data: coupon, error } = await (supabase as any)
     .from('coupons')
     .select('*')
     .eq('code', code.toUpperCase().trim())
@@ -95,7 +95,7 @@ export async function getShippingCost(
   const supabase = await createClient();
 
   // Verificar umbral de envío gratis
-  const { data: settings } = await supabase
+  const { data: settings } = await (supabase as any)
     .from('store_settings')
     .select('free_shipping_threshold')
     .eq('id', 1)
@@ -111,7 +111,7 @@ export async function getShippingCost(
   };
 
   const zoneName = COUNTRY_ZONE_MAP[country] ?? 'Europa';
-  const { data: zone } = await supabase
+  const { data: zone } = await (supabase as any)
     .from('shipping_zones')
     .select('price')
     .ilike('name', `%${zoneName}%`)
@@ -165,7 +165,7 @@ export async function createPaymentIntent(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: order, error: orderError } = await supabase
+  const { data: order, error: orderError } = await (supabase as any)
     .from('orders')
     .insert({
       user_id:        user?.id ?? null,
@@ -195,7 +195,7 @@ export async function createPaymentIntent(
   }
 
   // Insertar items del pedido
-  await supabase.from('order_items').insert(
+  await (supabase as any).from('order_items').insert(
     items.map(item => ({
       order_id:   order.id,
       product_id: item.id,
@@ -209,7 +209,7 @@ export async function createPaymentIntent(
   );
 
   // Insertar entrada inicial en timeline
-  await supabase.from('order_timeline').insert({
+  await (supabase as any).from('order_timeline').insert({
     order_id:    order.id,
     status:      'pendiente',
     description: 'Pedido recibido y pendiente de confirmación de pago.',
@@ -226,7 +226,7 @@ export async function confirmOrderPayment(stripePaymentIntentId: string): Promis
   const supabase = createAdminClient(); // Admin para bypassear RLS en webhook
 
   // Encontrar la orden por el PI ID
-  const { data: order, error } = await supabase
+  const { data: order, error } = await (supabase as any)
     .from('orders')
     .select('id, coupon_code')
     .eq('stripe_pi_id', stripePaymentIntentId)
@@ -238,7 +238,7 @@ export async function confirmOrderPayment(stripePaymentIntentId: string): Promis
   }
 
   // Actualizar a procesando + pago confirmado
-  await supabase
+  await (supabase as any)
     .from('orders')
     .update({ status: 'procesando', payment_status: 'paid' })
     .eq('id', order.id);
@@ -249,7 +249,7 @@ export async function confirmOrderPayment(stripePaymentIntentId: string): Promis
   }
 
   // Reducir stock de los productos
-  const { data: items } = await supabase
+  const { data: items } = await (supabase as any)
     .from('order_items')
     .select('product_id, quantity')
     .eq('order_id', order.id);

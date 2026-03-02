@@ -30,7 +30,7 @@ export async function subscribeNewsletter(
   if (!parsed.success) return { error: 'Introduce un email válido.' };
 
   const supabase = await createClient();
-  const { error } = await supabase.from('newsletter_subscribers').insert({
+  const { error } = await (supabase as any).from('newsletter_subscribers').insert({
     email:  parsed.data.toLowerCase(),
     source,
   });
@@ -64,7 +64,7 @@ export async function submitContact(formData: FormData): Promise<ActionResult> {
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
   const supabase = await createClient();
-  const { error } = await supabase.from('contact_messages').insert(parsed.data);
+  const { error } = await (supabase as any).from('contact_messages').insert(parsed.data);
 
   if (error) return { error: 'No se pudo enviar el mensaje. Inténtalo de nuevo.' };
 
@@ -92,7 +92,7 @@ export async function submitAffiliateApplication(formData: FormData): Promise<Ac
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
   const supabase = await createClient();
-  const { error } = await supabase.from('affiliate_applications').insert(parsed.data);
+  const { error } = await (supabase as any).from('affiliate_applications').insert(parsed.data);
 
   if (error) {
     if (error.message.includes('unique')) {
@@ -156,7 +156,7 @@ export async function submitCareerApplication(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.from('career_applications').insert({
+  const { error } = await (supabase as any).from('career_applications').insert({
     ...parsed.data,
     cv_url,
   });
@@ -200,7 +200,7 @@ export async function getBlogPosts({
 
 export async function getBlogPostBySlug(slug: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('blog_posts')
     .select('*')
     .eq('slug', slug)
@@ -213,7 +213,7 @@ export async function getBlogPostBySlug(slug: string) {
 
 export async function getRelatedPosts(category: string, excludeSlug: string, limit = 3) {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('blog_posts')
     .select('id, slug, title, excerpt, cover_url, published_at, author_name')
     .eq('category', category)

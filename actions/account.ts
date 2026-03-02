@@ -42,7 +42,7 @@ export async function getProfile() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('profiles')
     .select('*')
     .eq('id', user.id)
@@ -80,7 +80,7 @@ export async function getUserOrders() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('orders')
     .select('id, status, total, created_at, order_items(name, quantity)')
     .eq('user_id', user.id)
@@ -99,7 +99,7 @@ export async function getOrderDetail(orderId: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('orders')
     .select(`
       *,
@@ -122,7 +122,7 @@ export async function getAddresses() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('addresses')
     .select('*')
     .eq('user_id', user.id)
@@ -140,7 +140,7 @@ export async function createAddress(formData: FormData): Promise<ActionResult> {
   const parsed = AddressSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('addresses')
     .insert({ ...parsed.data, user_id: user.id });
 
@@ -162,7 +162,7 @@ export async function updateAddress(
   const parsed = AddressSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('addresses')
     .update(parsed.data)
     .eq('id', addressId)
@@ -179,7 +179,7 @@ export async function deleteAddress(addressId: string): Promise<ActionResult> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'No autorizado' };
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('addresses')
     .delete()
     .eq('id', addressId)
@@ -196,7 +196,7 @@ export async function setDefaultAddress(addressId: string): Promise<ActionResult
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'No autorizado' };
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('addresses')
     .update({ is_default: true })
     .eq('id', addressId)
@@ -217,7 +217,7 @@ export async function getFavorites() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return [];
 
-  const { data } = await supabase
+  const { data } = await (supabase as any)
     .from('favorites')
     .select('product_id, products(id, name, slug, price, product_images(url, alt))')
     .eq('user_id', user.id);
@@ -231,7 +231,7 @@ export async function toggleFavorite(productId: string): Promise<ActionResult> {
   if (!user) return { error: 'Inicia sesión para guardar favoritos.' };
 
   // Verificar si ya existe
-  const { data: existing } = await supabase
+  const { data: existing } = await (supabase as any)
     .from('favorites')
     .select('id')
     .eq('user_id', user.id)
@@ -239,10 +239,10 @@ export async function toggleFavorite(productId: string): Promise<ActionResult> {
     .single();
 
   if (existing) {
-    await supabase.from('favorites').delete()
+    await (supabase as any).from('favorites').delete()
       .eq('user_id', user.id).eq('product_id', productId);
   } else {
-    await supabase.from('favorites').insert({ user_id: user.id, product_id: productId });
+    await (supabase as any).from('favorites').insert({ user_id: user.id, product_id: productId });
   }
 
   revalidatePath('/account');

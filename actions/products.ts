@@ -81,7 +81,7 @@ export async function getProducts({
  */
 export async function getFeaturedProducts() {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('products')
     .select('*, product_images(url, alt, position)')
     .eq('featured', true)
@@ -101,7 +101,7 @@ export async function getFeaturedProducts() {
  */
 export async function getProductBySlug(slug: string) {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('products')
     .select('*, product_images(url, alt, position), product_variants(name, options)')
     .eq('slug', slug)
@@ -144,7 +144,7 @@ export async function createProduct(
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 
-  const { data: product, error: productError } = await supabase
+  const { data: product, error: productError } = await (supabase as any)
     .from('products')
     .insert({ ...parsed.data, slug })
     .select('id')
@@ -157,14 +157,14 @@ export async function createProduct(
 
   // Insertar imágenes
   if (imageUrls.length > 0) {
-    await supabase.from('product_images').insert(
+    await (supabase as any).from('product_images').insert(
       imageUrls.map((url, i) => ({ product_id: product.id, url, position: i }))
     );
   }
 
   // Insertar variantes
   if (variants.length > 0) {
-    await supabase.from('product_variants').insert(
+    await (supabase as any).from('product_variants').insert(
       variants.map(v => ({ product_id: product.id, name: v.name, options: v.options }))
     );
   }
@@ -183,7 +183,7 @@ export async function updateProductStatus(
 ): Promise<{ success?: true; error?: string }> {
   const supabase = await createClient();
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('products')
     .update({ status })
     .eq('id', productId);
@@ -205,7 +205,7 @@ export async function updateProductStock(
   if (stock < 0) return { error: 'El stock no puede ser negativo.' };
 
   const supabase = await createClient();
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('products')
     .update({ stock })
     .eq('id', productId);

@@ -27,7 +27,7 @@ async function requireAdmin() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/auth/login');
 
-  const { data: profile } = await supabase
+  const { data: profile } = await (supabase as any)
     .from('profiles')
     .select('role')
     .eq('id', user.id)
@@ -44,10 +44,10 @@ export async function getDashboardMetrics() {
   const supabase = await requireAdmin();
 
   const [ordersRes, revenueRes, usersRes, productsRes] = await Promise.all([
-    supabase.from('orders').select('id', { count: 'exact' }).eq('status', 'procesando'),
-    supabase.from('orders').select('total').in('status', ['procesando', 'enviado', 'entregado']),
-    supabase.from('profiles').select('id', { count: 'exact' }).eq('role', 'user'),
-    supabase.from('products').select('id', { count: 'exact' }).in('status', ['low_stock', 'out_of_stock']),
+    (supabase as any).from('orders').select('id', { count: 'exact' }).eq('status', 'procesando'),
+    (supabase as any).from('orders').select('total').in('status', ['procesando', 'enviado', 'entregado']),
+    (supabase as any).from('profiles').select('id', { count: 'exact' }).eq('role', 'user'),
+    (supabase as any).from('products').select('id', { count: 'exact' }).in('status', ['low_stock', 'out_of_stock']),
   ]);
 
   const totalRevenue = (revenueRes.data ?? []).reduce((acc, o) => acc + o.total, 0);
@@ -107,7 +107,7 @@ export async function updateOrderStatus(
   const updateData: Record<string, unknown> = { status };
   if (trackingCode) updateData.tracking_code = trackingCode;
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('orders')
     .update(updateData)
     .eq('id', orderId);
@@ -162,7 +162,7 @@ export async function updateUserSegment(
 ): Promise<ActionResult> {
   const supabase = await requireAdmin();
 
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('profiles')
     .update({ segment })
     .eq('id', userId);
@@ -192,7 +192,7 @@ export async function createCoupon(formData: FormData): Promise<ActionResult> {
   const parsed = CouponSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.errors[0].message };
 
-  const { error } = await supabase.from('coupons').insert({
+  const { error } = await (supabase as any).from('coupons').insert({
     ...parsed.data,
     expires: parsed.data.expires ? new Date(parsed.data.expires).toISOString() : null,
   });
@@ -208,7 +208,7 @@ export async function createCoupon(formData: FormData): Promise<ActionResult> {
 
 export async function toggleCoupon(couponId: string, active: boolean): Promise<ActionResult> {
   const supabase = await requireAdmin();
-  const { error } = await supabase
+  const { error } = await (supabase as any)
     .from('coupons')
     .update({ active })
     .eq('id', couponId);
@@ -220,7 +220,7 @@ export async function toggleCoupon(couponId: string, active: boolean): Promise<A
 
 export async function deleteCoupon(couponId: string): Promise<ActionResult> {
   const supabase = await requireAdmin();
-  const { error } = await supabase.from('coupons').delete().eq('id', couponId);
+  const { error } = await (supabase as any).from('coupons').delete().eq('id', couponId);
   if (error) return { error: 'No se pudo eliminar el cupón.' };
   revalidatePath('/admin/settings');
   return { success: true };
@@ -231,7 +231,7 @@ export async function deleteCoupon(couponId: string): Promise<ActionResult> {
 // ══════════════════════════════════════════════════════════════════
 export async function getStoreSettings() {
   const supabase = await requireAdmin();
-  const { data } = await supabase.from('store_settings').select('*').eq('id', 1).single();
+  const { data } = await (supabase as any).from('store_settings').select('*').eq('id', 1).single();
   return data;
 }
 
@@ -259,7 +259,7 @@ export async function updateStoreSettings(formData: FormData): Promise<ActionRes
     filtered[field] = filtered[field] === 'on' || filtered[field] === 'true';
   }
 
-  const { error } = await supabase.from('store_settings').update(filtered).eq('id', 1);
+  const { error } = await (supabase as any).from('store_settings').update(filtered).eq('id', 1);
   if (error) return { error: 'No se pudo guardar la configuración.' };
 
   revalidatePath('/admin/settings');
