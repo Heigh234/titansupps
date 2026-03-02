@@ -62,7 +62,7 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
 
   const { error } = await supabase
     .from('profiles')
-    .update(parsed.data)
+    .update(parsed.data as Record<string, unknown>)
     .eq('id', user.id);
 
   if (error) return { error: 'No se pudo actualizar el perfil.' };
